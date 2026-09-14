@@ -9,7 +9,15 @@ const envConf = require(path.resolve(__dirname + "/../config/env/" + finalEnv.to
 
 const config = { ...allConf, ...envConf };
 
-console.log(`Current Config:`);
-console.log(util.inspect(config, false, null));
+// Log a sanitized view of the config: never print secrets (CWE-532)
+const sanitizedConfig = {
+    ...config,
+    cookieSecret: "****",
+    cryptoKey: "****",
+    db: config.db.replace(/\/\/[^@/]*:[^@]*@/, "//****:****@")
+};
+
+console.log(`Current Config (secrets redacted):`);
+console.log(util.inspect(sanitizedConfig, false, null));
 
 module.exports = config;
